@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div id="value-container1"></div>
+    <div id="value-container2"></div>
+    <div id="value-container3"></div>
+    <script>
+        function fetchDataFromServer() {
+            $.get('/get_value', function(data) {
+                $('#value-container1').text('Value from cache: ' + data.value);
+                $('#value-container2').text('Value from device: ' + data.value2);
+                $('#value-container3').text('Value from drain: ' + data.value2);
+                
+            });
+        }
+    
+        // Call the function initially
+        fetchDataFromServer();
+    
+        // Set up an interval to call the function every 5 seconds
+        setInterval(fetchDataFromServer, 5000);
+    </script>
+    
+</body>
+<body>
+    <h1>Slider Example</h1>
+    <label for="device-slider">Device On/Off:</label>
+    <input type="range" id="device-slider" min="0" max="1" step="1" value="0">
+
+    <label for="drain-slider">Drain On/Off:</label>
+    <input type="range" id="drain-slider" min="0" max="1" step="1" value="0">
+
+    <label for="humidity-slider">Desired Humidity:</label>
+    <input type="range" id="humidity-slider" min="1" max="100" step="1" value="50">
+
+
+
+    <script>
+        // AJAX call when sliders change
+        $('#device-slider, #drain-slider, #humidity-slider').on('input', function() {
+            const deviceValue = $('#device-slider').val();
+            const drainValue = $('#drain-slider').val();
+            const humidityValue = $('#humidity-slider').val();
+
+            // Send data to the server (you can adjust the URL as needed)
+            $.ajax({
+                method: 'POST',
+                url: '/update_settings',
+                data: {
+                    device: deviceValue,
+                    drain: drainValue,
+                    humidity: humidityValue
+                },
+                success: function(response) {
+                    console.log('Settings updated:', response);
+                },
+                error: function(error) {
+                    console.error('Error updating settings:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
